@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No-Mobile Zone Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+        }
+
+        nav {
+            background-color: #ffffff;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        nav img {
+            height: 50px;
+            border-radius: 5px;
+        }
+
+        nav .nav-links a {
+            color: #333;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        nav .nav-links a:hover {
+            color: #4CAF50;
+            transform: scale(1.1);
+        }
+
+        nav .btn-group a {
+            background-color: #2196F3;
+            color: white;
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+
+        nav .btn-group a:hover {
+            background-color: #1976D2;
+            transform: scale(1.05);
+        }
+
+        nav .btn-group .btn-logout {
+            background-color: #D32F2F;
+        }
+
+        nav .btn-group .btn-logout:hover {
+            background-color: #B71C1C;
+        }
+
+        .hero {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: #333;
+        }
+
+        .hero p {
+            color: #555;
+            font-size: 1.1rem;
+        }
+
+        .video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .video-frame {
+            width: 720px;
+            height: 500px;
+            border: 5px solid #4CAF50;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .video-frame:hover {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+        }
+
+        .controls {
+            margin-top: 20px;
+        }
+
+        .controls select, .controls button {
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .controls select {
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+        }
+
+        .controls button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .controls button:hover {
+            background-color: #388E3C;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+
+        /* Smooth Video Effect */
+        .video-frame {
+            border: 5px solid transparent;
+            animation: glow 1.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                border-color: #4CAF50;
+                box-shadow: 0 0 20px #4CAF50;
+            }
+            to {
+                border-color: #388E3C;
+                box-shadow: 0 0 30px #388E3C;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div>
+        <img src="{{ url_for('static', filename='logo1.jpg') }}" alt="Logo">
+    </div>
+
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </div>
+
+    <div class="btn-group">
+        <a href="{{ url_for('admin') }}" class="btn-admin">🛡 Admin Panel</a>
+        <a href="{{ url_for('logout') }}" class="btn-logout">🔐 Logout</a>
+    </div>
+</nav>
+
+<div class="hero">
+    <h1>🚫 No-Mobile Zone Detection System</h1>
+    <p>Real-time detection of mobile phone usage in restricted zones.</p>
+</div>
+
+<div class="video-container">
+    <div class="video-frame">
+        <img id="video" src="{{ url_for('video_feed') }}">
+    </div>
+    <div class="controls">
+        <select id="cameraSelect">
+            <option value="laptop">🎥 Laptop Camera</option>
+            <option value="usb">🔌 External USB Camera</option>
+        </select>
+        <button onclick="startVideo()">▶ Start</button>
+        <button onclick="stopVideo()">⏹ Stop</button>
+    </div>
+</div>
+
+<footer>
+    Developed by <a href="#">Aman Das</a> | &copy; 2025
+</footer>
+
+<script>
+    const video = document.getElementById('video');
+
+    function startVideo() {
+        video.src = "{{ url_for('video_feed') }}";
+    }
+
+    function stopVideo() {
+        video.src = "{{ url_for('static', filename='picture.png') }}";
+    }
+
+
+    document.getElementById('cameraSelect').addEventListener('change', function() {
+        const selectedCamera = this.value;
+        fetch('/change_camera', {
+            method: 'POST',
+            body: new URLSearchParams({ camera_option: selectedCamera }),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+    });
+</script>
+</body>
+</html>
