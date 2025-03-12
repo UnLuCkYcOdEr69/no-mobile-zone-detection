@@ -4,208 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>No-Mobile Zone Detection</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        body {
-            background-color: #f4f6f9;
-        }
-
-        nav {
-            background-color: #ffffff;
-            padding: 15px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        nav img {
-            height: 50px;
-            border-radius: 5px;
-        }
-
-        nav .nav-links a {
-            color: #333;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 1rem;
-            transition: all 0.3s;
-        }
-
-        nav .nav-links a:hover {
-            color: #4CAF50;
-            transform: scale(1.1);
-        }
-
-        nav .btn-group a {
-            background-color: #2196F3;
-            color: white;
-            text-decoration: none;
-            padding: 8px 14px;
-            border-radius: 5px;
-            font-size: 0.9rem;
-            margin-left: 10px;
-            transition: all 0.3s;
-        }
-
-        nav .btn-group a:hover {
-            background-color: #1976D2;
-            transform: scale(1.05);
-        }
-
-        nav .btn-group .btn-logout {
-            background-color: #D32F2F;
-        }
-
-        nav .btn-group .btn-logout:hover {
-            background-color: #B71C1C;
-        }
-
-        .hero {
-            text-align: center;
-            margin: 50px 0;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            color: #333;
-        }
-
-        .hero p {
-            color: #555;
-            font-size: 1.1rem;
-        }
-
-        .video-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin-top: 20px;
-        }
-
-        .video-frame {
-            width: 720px;
-            height: 500px;
-            border: 5px solid #4CAF50;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s;
-        }
-
-        .video-frame:hover {
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        #video {
-            width: 100%;
-            height: 100%;
-            border-radius: 12px;
-        }
-
-        .controls {
-            margin-top: 20px;
-        }
-
-        .controls select, .controls button {
-            padding: 12px 20px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 5px;
-            margin: 0 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .controls select {
-            background-color: #f4f4f4;
-            border: 1px solid #ccc;
-        }
-
-        .controls button {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .controls button:hover {
-            background-color: #388E3C;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            color: #888;
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            text-decoration: none;
-            color: #4CAF50;
-        }
-
-        /* Smooth Video Effect */
-        .video-frame {
-            border: 5px solid transparent;
-            animation: glow 1.5s infinite alternate;
-        }
-
-        @keyframes glow {
-            from {
-                border-color: #4CAF50;
-                box-shadow: 0 0 20px #4CAF50;
-            }
-            to {
-                border-color: #388E3C;
-                box-shadow: 0 0 30px #388E3C;
-            }
-        }
-    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<style>
+    
+</style>
+<body class="bg-gray-100">
 
-<nav>
+<!-- Navbar -->
+<nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center">
     <div>
-        <img src="{{ url_for('static', filename='logo1.jpg') }}" alt="Logo">
+        <img src="{{ url_for('static', filename='logo1.jpg') }}" alt="Logo" class="h-12 rounded-md">
     </div>
-
-
-
-    <div class="btn-group">
-        <a href="{{ url_for('admin') }}" class="btn-admin">🛡 Admin Panel</a>
-        <a href="{{ url_for('logout') }}" class="btn-logout">🔐 Logout</a>
+    <div class="flex space-x-4">
+        <a href="{{ url_for('admin') }}" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">🛡 Admin Panel</a>
+        <a href="{{ url_for('logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition">🔐 Logout</a>
     </div>
 </nav>
 
-<div class="hero">
-    <h1>🚫 No-Mobile Zone Detection System</h1>
-    <p>Real-time detection of mobile phone usage in restricted zones.</p>
+<!-- Hero Section -->
+<div class="text-center mt-12">
+    <h1 class="text-4xl font-bold text-gray-800">🚫 No-Mobile Zone Detection System</h1>
+    <p class="text-lg text-gray-600 mt-2">Real-time detection of mobile phone usage in restricted zones.</p>
 </div>
 
-<div class="video-container">
-    <div class="video-frame">
-        <img id="video" src="{{ url_for('video_feed') }}">
+<!-- Video Section -->
+<div class="flex flex-col items-center mt-10">
+    <div class="w-[720px] h-[500px] border-4 border-green-500 rounded-lg overflow-hidden shadow-lg">
+        <img id="video" src="{{ url_for('video_feed') }}" class="w-full h-full">
     </div>
-    <div class="controls">
-        <select id="cameraSelect">
+    <div class="flex space-x-4 mt-4">
+        <select id="cameraSelect" class="px-4 py-2 border border-gray-300 rounded-md">
             <option value="laptop">🎥 Laptop Camera</option>
             <option value="usb">🔌 External USB Camera</option>
         </select>
-        <button onclick="startVideo()">▶ Start</button>
-        <button onclick="stopVideo()">⏹ Stop</button>
+        <button onclick="startVideo()" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">▶ Start</button>
+        <button onclick="stopVideo()" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 transition">⏹ Stop</button>
     </div>
 </div>
 
-<footer>
-    Developed by <a href="#">Aman Das</a> | &copy; 2025
+<!-- Footer -->
+<footer class="text-center text-gray-500 mt-12 text-sm">
+    Developed by <a href="#" class="text-green-500 hover:underline">Aman Das</a> | &copy; 2025
 </footer>
 
+<!-- JavaScript -->
 <script>
     const video = document.getElementById('video');
 
@@ -217,7 +60,6 @@
         video.src = "{{ url_for('static', filename='picture.png') }}";
     }
 
-
     document.getElementById('cameraSelect').addEventListener('change', function() {
         const selectedCamera = this.value;
         fetch('/change_camera', {
@@ -227,5 +69,6 @@
         });
     });
 </script>
+
 </body>
 </html>
