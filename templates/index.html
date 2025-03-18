@@ -6,9 +6,13 @@
     <title>No-Mobile Zone Detection</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
         }
 
         /* Loader Styles */
@@ -42,13 +46,62 @@
             transition: opacity 0.5s ease-out;
         }
 
-        /* Hide detection section initially */
-        #detection-section {
-            display: none;
+        /* 3D Background Animation */
+        #threejs-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
+
+        /* Glowing Button */
+        .glow-button {
+            background: linear-gradient(45deg, #ff4f4f, #ff8a4f);
+            box-shadow: 0 0 20px rgba(255, 79, 79, 0.6);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glow-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 79, 79, 0.8);
+        }
+
+        /* Boxy Content Cards */
+        .box-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .box-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+
+        /* Background Image with Overlay */
+        #threejs-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{{ url_for('static', filename='background.jpg') }}") no-repeat center center/cover;
+            filter: brightness(0.6); /* Darkens the background slightly */
+            z-index: -1;
+        }
+
+
+        
     </style>
 </head>
 <body class="bg-gray-50">
+
+<!-- 3D Background Animation -->
+<div id="threejs-background"></div>
 
 <!-- Loader -->
 <div id="loader">
@@ -57,65 +110,103 @@
 </div>
 
 <!-- Navbar -->
-<nav class="bg-white shadow-md py-4 px-8 flex justify-between items-center fixed w-full top-0 z-50">
+<nav class="bg-[#1E1E1E]/80 backdrop-blur-lg shadow-md py-4 px-8 flex justify-between items-center fixed w-full top-0 z-50">
+
+
+
     <div>
         <img src="{{ url_for('static', filename='logo1.jpg') }}" alt="Logo" class="h-12 rounded-md">
     </div>
     <div class="flex space-x-6">
-        <a href="#home" class="text-gray-700 hover:text-red-500 transition">Home</a>
-        <a href="#about" class="text-gray-700 hover:text-red-500 transition">About</a>
-        <a href="#contact" class="text-gray-700 hover:text-red-500 transition">Contact</a>
+        <a href="#home" class="text-white hover:text-red-500 transition">Home</a>
+        <a href="#about" class="text-white hover:text-red-500 transition">About</a>
+        <a href="#contact" class="text-white hover:text-red-500 transition">Contact</a>
         <a href="{{ url_for('admin') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition">🛡 Admin Panel</a>
         <a href="{{ url_for('logout') }}" class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition">🔐 Logout</a>
     </div>
 </nav>
 
+
 <!-- Hero Section -->
-<section id="home" class="text-center mt-24 py-20 bg-gray-900 text-white">
-    <h1 class="text-5xl font-bold">🚫 No-Mobile Zone Detection</h1>
-    <p class="text-lg mt-3 opacity-80">A smart AI system that keeps restricted areas mobile-free.</p>
-    <button onclick="showDetection()" class="bg-red-600 text-white px-6 py-3 rounded-lg mt-6 hover:bg-red-700 transition text-lg">
-        Start Detection 🚀
-    </button>
+<section id="home" class="text-center mt-24 py-32 relative overflow-hidden flex flex-col items-center">
+    
+    <!-- Wrapper for text, moved to the top -->
+    <div class="absolute top-6 w-full text-center">
+        <h1 class="text-6xl font-bold text-white mb-4">🚫 No-Mobile Zone Detection</h1>
+        <p class="text-xl text-white mb-8">A smart AI system that keeps restricted areas mobile-free.</p>
+    </div>
+
+
+
+    <!-- Button stays in place -->
+    <div class="relative z-10 mt-52">
+        <button onclick="showDetection()" class="glow-button text-white px-8 py-4 rounded-lg text-lg">
+            Start Detection 🚀
+        </button>
+    </div>
+
 </section>
+
+
+
 
 <!-- About Section -->
-<section id="about" class="py-20 text-center">
-    <h2 class="text-3xl font-semibold text-gray-800">📜 About the System</h2>
-    <p class="text-gray-600 mt-4 max-w-2xl mx-auto">
-        This AI-powered system automatically detects mobile phone usage in no-mobile zones, helping institutions, workplaces, and public spaces maintain discipline and focus.
-    </p>
+<section id="about" class="py-20 text-center bg-white/90 backdrop-blur-md relative">
+    <div class="max-w-6xl mx-auto px-4">
+        <h2 class="text-4xl font-semibold text-gray-800 mb-6">📜 About the System</h2>
+        <p class="text-lg text-gray-600 mb-12">
+            This AI-powered system automatically detects mobile phone usage in no-mobile zones, helping institutions, workplaces, and public spaces maintain discipline and focus. It uses advanced computer vision algorithms to ensure real-time monitoring and alerts.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="box-card p-6 rounded-lg">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Real-Time Detection</h3>
+                <p class="text-gray-600">Instant alerts for mobile phone usage in restricted zones.</p>
+            </div>
+            <div class="box-card p-6 rounded-lg">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">AI-Powered</h3>
+                <p class="text-gray-600">Advanced computer vision for accurate detection.</p>
+            </div>
+            <div class="box-card p-6 rounded-lg">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-4">Customizable</h3>
+                <p class="text-gray-600">Tailor the system to your specific needs.</p>
+            </div>
+        </div>
+    </div>
 </section>
 
-<!-- Video Detection Section (Initially Hidden) -->
-<section id="detection-section" class="py-20 text-center bg-gray-200">
-    <h2 class="text-3xl font-semibold text-gray-800">📷 Live Detection</h2>
-    <p class="text-gray-600 mt-4">Real-time monitoring of mobile phone usage in restricted zones.</p>
+<!-- Video Detection Section -->
+<section id="detection-section" class="py-20 text-center bg-gray-100/90 backdrop-blur-md">
+    <div class="max-w-4xl mx-auto px-4">
+        <h2 class="text-4xl font-semibold text-gray-800 mb-6">📷 Live Detection</h2>
+        <p class="text-lg text-gray-600 mb-8">Real-time monitoring of mobile phone usage in restricted zones.</p>
 
-    <div class="flex flex-col items-center mt-10">
-        <div class="w-full max-w-2xl h-[500px] border-4 border-green-500 rounded-lg overflow-hidden shadow-lg">
-            <img id="video" src="{{ url_for('video_feed') }}" class="w-full h-full object-cover">
-        </div>
-        <div class="flex space-x-4 mt-4">
-            <select id="cameraSelect" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
-                <option value="laptop">🎥 Laptop Camera</option>
-                <option value="usb">🔌 External USB Camera</option>
-            </select>
-            <button onclick="startVideo()" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition">▶ Start</button>
-            <button onclick="stopVideo()" class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition">⏹ Stop</button>
+        <div class="flex flex-col items-center">
+            <div class="w-full max-w-2xl h-[500px] border-4 border-green-500 rounded-lg overflow-hidden shadow-lg">
+                <img id="video" src="{{ url_for('video_feed') }}" class="w-full h-full object-cover">
+            </div>
+            <div class="flex space-x-4 mt-6">
+                <select id="cameraSelect" class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    <option value="laptop">🎥 Laptop Camera</option>
+                    <option value="usb">🔌 External USB Camera</option>
+                </select>
+                <button onclick="startVideo()" class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 transition">▶ Start</button>
+                <button onclick="stopVideo()" class="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition">⏹ Stop</button>
+            </div>
         </div>
     </div>
 </section>
 
 <!-- Contact Section -->
-<section id="contact" class="py-20 text-center">
-    <h2 class="text-3xl font-semibold text-gray-800">📩 Contact Us</h2>
-    <form class="mt-6 max-w-md mx-auto">
-        <input type="text" placeholder="Your Name" class="w-full p-3 border border-gray-300 rounded-md mb-4" required>
-        <input type="email" placeholder="Your Email" class="w-full p-3 border border-gray-300 rounded-md mb-4" required>
-        <textarea placeholder="Your Message" class="w-full p-3 border border-gray-300 rounded-md mb-4" rows="4" required></textarea>
-        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition">Send Message</button>
-    </form>
+<section id="contact" class="py-20 text-center bg-white/90 backdrop-blur-md">
+    <div class="max-w-4xl mx-auto px-4">
+        <h2 class="text-4xl font-semibold text-gray-800 mb-6">📩 Contact Us</h2>
+        <form class="mt-6 max-w-md mx-auto">
+            <input type="text" placeholder="Your Name" class="w-full p-3 border border-gray-300 rounded-md mb-4" required>
+            <input type="email" placeholder="Your Email" class="w-full p-3 border border-gray-300 rounded-md mb-4" required>
+            <textarea placeholder="Your Message" class="w-full p-3 border border-gray-300 rounded-md mb-4" rows="4" required></textarea>
+            <button type="submit" class="bg-blue-600 text-white px-8 py-3 rounded-md hover:bg-blue-700 transition">Send Message</button>
+        </form>
+    </div>
 </section>
 
 <!-- Footer -->
@@ -132,6 +223,7 @@
             setTimeout(() => document.getElementById('loader').style.display = 'none', 500);
         }, 2500);
     };
+
 
     // Show detection section when button is clicked
     function showDetection() {
@@ -158,6 +250,108 @@
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
     });
+
+    // Three.js Background Animation
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true });
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('threejs-background').appendChild(renderer.domElement);
+
+    // Create the torus (Magnifying glass frame)
+    const torusGeometry = new THREE.TorusGeometry(0.7, 0.1, 16, 100);
+    const torusMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0xff6666, 
+        metalness: 0.8, 
+        roughness: 0.2 
+    });
+    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+
+    // Load a **realistic Earth texture**
+    const textureLoader = new THREE.TextureLoader();
+    const globeTexture = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'); 
+
+    // Create the **Earth sphere**
+    const globeGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+    const globeMaterial = new THREE.MeshStandardMaterial({ 
+        map: globeTexture,
+        metalness: 0.4, 
+        roughness: 0.3
+    });
+    const globe = new THREE.Mesh(globeGeometry, globeMaterial);
+
+    // Create the cylindrical handle
+    const handleGeometry = new THREE.CylinderGeometry(0.1, 0.1, 1.2, 32);
+    const handleMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0xff6666, 
+        metalness: 0.8, 
+        roughness: 0.2 
+    });
+    const handle = new THREE.Mesh(handleGeometry, handleMaterial);
+    handle.position.set(0.8, -0.8, 0);
+    handle.rotation.z = Math.PI / 4;
+
+    // 🌍 **Fix: Lower the Globe for Perfect Centering**
+    const magnifyingGlass = new THREE.Group();
+    magnifyingGlass.add(torus);
+    magnifyingGlass.add(handle);
+    magnifyingGlass.position.y = -0.5; 
+
+    // 🔥 Lowering the globe slightly
+    globe.position.set(0, -0.49, 0); // Adjusted for perfect alignment
+
+    scene.add(magnifyingGlass);
+    scene.add(globe);
+
+    camera.position.z = 5;
+
+    // Light source
+    const light = new THREE.PointLight(0xffffff, 2, 100);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+
+    // 🎯 **Final Fix: Independent Rotations**
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        // 🔄 **Magnifying Glass Rotates in 3D**
+        magnifyingGlass.rotation.y += 0.03; 
+        magnifyingGlass.rotation.x += 0.02; 
+        
+        // 🌍 **Globe rotates ONLY sideways (Y-axis) slowly**
+        globe.rotation.y += 0.005;  
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // Scroll-triggered animation (Expands on scroll)
+    gsap.to(magnifyingGlass.scale, {
+        x: 1.5,
+        y: 1.5,
+        z: 1.5,
+        scrollTrigger: {
+            trigger: "#about",
+            start: "top center",
+            end: "bottom center",
+            scrub: true
+        }
+    });
+
+    // Change background color on scroll
+    gsap.to("#about", {
+        backgroundColor: "rgba(255, 102, 102, 0.1)",
+        scrollTrigger: {
+            trigger: "#about",
+            start: "top center",
+            end: "bottom center",
+            scrub: true
+        }
+    });
+
+
+
 </script>
 
 </body>
